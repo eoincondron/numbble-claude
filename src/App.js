@@ -29,7 +29,7 @@ const MathTilePuzzle = () => {
   // Initialize game
   const initializeGame = () => {
     // Generate 4-6 random single-digit numbers
-    const newBoard = Array.from({ length: 6 },
+    const newBoard = Array.from({ length: Math.floor(Math.random() * 3 + 4) },
         () => Math.floor(Math.random() * 9) + 1);
 
     // Create a pool of operator tiles
@@ -220,136 +220,149 @@ const MathTilePuzzle = () => {
   };
 
   return (
-      <div className="max-w-md mx-auto p-4 bg-white shadow-lg rounded-lg">
-        <h1 className="text-2xl font-bold mb-4 text-center">Advanced Math Tile Puzzle</h1>
-
-        {/* Score and Timer */}
-        <div className="flex justify-between mb-4">
-          <div className="text-lg font-medium">
-            Score: {score}
-          </div>
-          <div className={`text-lg font-medium flex items-center ${
-              timeRemaining <= 10 ? 'text-red-500' : ''
-          }`}>
-            <Clock className="mr-2" /> {timeRemaining}s
-          </div>
-        </div>
-
-        {/* Board Numbers */}
-        <div className="flex justify-center items-center mb-4 flex-wrap">
-          {board.map((num, index) => (
-              <div key={index} className="flex items-center">
-                {/* Parentheses before number */}
-                {placedParentheses
-                    .filter(p => p.index === index && p.type === '(')
-                    .map((p, i) => (
-                        <div key={i} className="text-2xl mr-1">(</div>
-                    ))}
-
-                {/* Number */}
-                <div
-                    className="w-12 h-12 flex items-center justify-center
-                         border-2 border-blue-500 rounded-lg m-1 text-xl font-bold"
-                >
-                  {num}
-                </div>
-
-                {/* Parentheses after number */}
-                {placedParentheses
-                    .filter(p => p.index === index && p.type === ')')
-                    .map((p, i) => (
-                        <div key={i} className="text-2xl ml-1">)</div>
-                    ))}
-
-                {/* Operator placement */}
-                {index < board.length - 1 && (
-                    <div
-                        className="w-12 h-12 flex items-center justify-center
-                           border-2 border-dashed border-gray-300 rounded-lg ml-1 cursor-pointer"
-                        onClick={() => placeOperator(index)}
-                    >
-                      {placedOperators[index] || '+'}
-                    </div>
-                )}
-
-                {/* Number concatenation option */}
-                {index < board.length - 1 && (
-                    <div
-                        className="w-6 h-6 flex items-center justify-center
-                           border border-gray-300 rounded ml-1 cursor-pointer text-sm"
-                        onClick={() => concatenateNumbers(index)}
-                    >
-                      ⥄
-                    </div>
-                )}
+      <div className="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex items-center justify-center p-4">
+        <div className="bg-white shadow-2xl rounded-2xl p-6 w-full max-w-md">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-blue-800">Math Tile Puzzle</h1>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center bg-blue-100 px-3 py-1 rounded-full">
+                <Clock className="mr-2 text-blue-600" />
+                <span className={`text-xl font-semibold ${
+                    timeRemaining <= 10 ? 'text-red-500' : 'text-blue-800'
+                }`}>
+                {timeRemaining}s
+              </span>
               </div>
-          ))}
-        </div>
-
-        {/* Operator Tiles */}
-        <div className="flex justify-center mb-4 flex-wrap">
-          {operatorTiles.map((tile, index) => (
-              <button
-                  key={index}
-                  onClick={() => handleTileSelect(tile, true)}
-                  className="w-12 h-12 m-1 bg-blue-500 text-white rounded-lg
-                       hover:bg-blue-600 focus:outline-none"
-              >
-                {tile === '½' ? '1/2' : tile}
-              </button>
-          ))}
-          {/* Add extra buttons for '(' and ')' */}
-          <button
-              onClick={() => handleTileSelect('(', true)}
-              className="w-12 h-12 m-1 bg-green-500 text-white rounded-lg
-                     hover:bg-green-600 focus:outline-none"
-          >
-            (
-          </button>
-          <button
-              onClick={() => handleTileSelect(')', true)}
-              className="w-12 h-12 m-1 bg-green-500 text-white rounded-lg
-                     hover:bg-green-600 focus:outline-none"
-          >
-            )
-          </button>
-        </div>
-
-        {/* Game Status & Actions */}
-        <div className="flex justify-center items-center space-x-4">
-          <button
-              onClick={validateEquation}
-              className="bg-green-500 text-white px-4 py-2 rounded-lg
-                     hover:bg-green-600 flex items-center"
-              disabled={!timerActive}
-          >
-            <CheckIcon className="mr-2" /> Check Equation
-          </button>
-          <button
-              onClick={initializeGame}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg
-                     hover:bg-blue-600 flex items-center"
-          >
-            <RefreshCcw className="mr-2" /> New Game
-          </button>
-        </div>
-
-        {/* Game Status Feedback */}
-        {gameStatus && (
-            <div className={`mt-4 p-2 text-center rounded-lg ${
-                gameStatus === 'success'
-                    ? 'bg-green-100 text-green-800'
-                    : gameStatus === 'timeout'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-red-100 text-red-800'
-            }`}>
-              {gameStatus === 'success'
-                  ? 'Congratulations! Valid equation created!'
-                  : gameStatus === 'timeout'
-                      ? 'Time is up! Start a new game.'
-                      : 'Invalid equation. Try again!'}
+              <div className="flex items-center bg-green-100 px-3 py-1 rounded-full">
+              <span className="text-xl font-semibold text-green-800">
+                Score: {score}
+              </span>
+              </div>
             </div>
-        )}
+          </div>
+
+          {/* Game Board */}
+          <div className="bg-blue-50 rounded-xl p-4 mb-4">
+            <div className="flex flex-col items-center space-y-2">
+              {board.map((num, index) => (
+                  <div key={index} className="flex items-center w-full justify-center space-x-2">
+                    {/* Parentheses before number */}
+                    {placedParentheses
+                        .filter(p => p.index === index && p.type === '(')
+                        .map((p, i) => (
+                            <div key={i} className="text-2xl text-blue-600">(</div>
+                        ))}
+
+                    {/* Number */}
+                    <div
+                        className="w-16 h-16 flex items-center justify-center
+                             bg-blue-500 text-white rounded-lg text-2xl font-bold shadow-md"
+                    >
+                      {num}
+                    </div>
+
+                    {/* Parentheses after number */}
+                    {placedParentheses
+                        .filter(p => p.index === index && p.type === ')')
+                        .map((p, i) => (
+                            <div key={i} className="text-2xl text-blue-600">)</div>
+                        ))}
+
+                    {/* Operator placement */}
+                    {index < board.length - 1 && (
+                        <div className="flex items-center space-x-2">
+                          <div
+                              className="w-12 h-12 flex items-center justify-center
+                                 border-2 border-dashed border-blue-300 rounded-lg
+                                 cursor-pointer hover:bg-blue-100 transition"
+                              onClick={() => placeOperator(index)}
+                          >
+                            {placedOperators[index] || '+'}
+                          </div>
+
+                          {/* Number concatenation option */}
+                          <div
+                              className="w-8 h-8 flex items-center justify-center
+                                 bg-blue-200 text-blue-700 rounded-full
+                                 cursor-pointer hover:bg-blue-300 transition"
+                              onClick={() => concatenateNumbers(index)}
+                          >
+                            ⥄
+                          </div>
+                        </div>
+                    )}
+                  </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Operator Tiles */}
+          <div className="grid grid-cols-5 gap-2 mb-4">
+            {operatorTiles.map((tile, index) => (
+                <button
+                    key={index}
+                    onClick={() => handleTileSelect(tile, true)}
+                    className="bg-blue-500 text-white rounded-lg py-2
+                         hover:bg-blue-600 focus:outline-none transition"
+                >
+                  {tile === '½' ? '1/2' : tile}
+                </button>
+            ))}
+            {/* Parenthesis buttons */}
+            <button
+                onClick={() => handleTileSelect('(', true)}
+                className="bg-green-500 text-white rounded-lg py-2
+                       hover:bg-green-600 focus:outline-none transition"
+            >
+              (
+            </button>
+            <button
+                onClick={() => handleTileSelect(')', true)}
+                className="bg-green-500 text-white rounded-lg py-2
+                       hover:bg-green-600 focus:outline-none transition"
+            >
+              )
+            </button>
+          </div>
+
+          {/* Game Actions */}
+          <div className="flex space-x-4">
+            <button
+                onClick={validateEquation}
+                className="flex-1 bg-green-500 text-white py-3 rounded-lg
+                       hover:bg-green-600 flex items-center justify-center
+                       space-x-2 transition"
+                disabled={!timerActive}
+            >
+              <CheckIcon className="mr-2" /> Check Equation
+            </button>
+            <button
+                onClick={initializeGame}
+                className="flex-1 bg-blue-500 text-white py-3 rounded-lg
+                       hover:bg-blue-600 flex items-center justify-center
+                       space-x-2 transition"
+            >
+              <RefreshCcw className="mr-2" /> New Game
+            </button>
+          </div>
+
+          {/* Game Status Feedback */}
+          {gameStatus && (
+              <div className={`mt-4 p-3 text-center rounded-lg font-semibold ${
+                  gameStatus === 'success'
+                      ? 'bg-green-100 text-green-800'
+                      : gameStatus === 'timeout'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+              }`}>
+                {gameStatus === 'success'
+                    ? 'Congratulations! Valid equation created!'
+                    : gameStatus === 'timeout'
+                        ? 'Time is up! Start a new game.'
+                        : 'Invalid equation. Try again!'}
+              </div>
+          )}
+        </div>
       </div>
   );
 };
